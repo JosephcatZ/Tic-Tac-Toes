@@ -2,8 +2,23 @@ def setup():
     size(500,500)
 
 board =  [0,0,0,0,0,0,0,0,0]
+#0-horizontal 1-vertical 2- diagonal
+wincons = [
+           [0,1,2,0],
+           [3,4,5,0],
+           [6,7,8,0],
+           [0,3,6,1],
+           [1,4,7,1],
+           [2,5,8,1],
+           [0,4,8,2],
+           [6,4,2,3]
+           ]
+
 turn = "x"
 def draw():
+    if Win==False:
+        dBoard()
+def dBoard():
     chalk = loadImage("Blackboard.jpg")
     image(chalk,0,0,500,500)
     textFont(loadFont("ChalkboardSE-Light-48.vlw"),48)
@@ -36,6 +51,37 @@ def draw():
     textSize(50)
     textAlign(CENTER,CENTER)
     text("Turn",250,450)
+Win = False
+def checkWin():
+    global Win
+    Wins=[]
+    for i in wincons:
+        if equal(i[0],i[1],i[2]):
+            dBoard()
+            if board[i[0]] == 'x':
+                stroke(0,0,255)
+            else:
+                stroke(255,0,0)
+            Wins.append(i)
+    for i in Wins:
+        if i[3] == 0:
+            line(getx(i[0],-50),gety(i[0],0),getx(i[2],50),gety(i[2],0))
+        elif i[3] == 1:
+            line(getx(i[0],0),gety(i[0],-50),getx(i[2],0),gety(i[2],50))
+        elif i[3] == 2:
+            line(getx(i[0],-50),gety(i[0],-50),getx(i[2],50),gety(i[2],50))
+        if i[3] == 3:
+            line(getx(i[0],-50),gety(i[0],50),getx(i[2],50),gety(i[2],-50))
+        Win = True
+def equal(a,b,c):
+    if(board[a]==board[b] and board[b]==board[c] and board[c] != 0):
+        return(True)
+    else:
+        return(False)
+def getx(n,xo):
+    return(150+xo+(n%3)*100)
+def gety(n,yo):
+    return(150+yo+(n-n%3)*100/3)
 def drawchar(bp,x,y):
     noFill()
     if (board[bp] == 'o'):
@@ -58,3 +104,4 @@ def mouseClicked():
             turn = 'o'
         else:
             turn = 'x'
+    checkWin()
